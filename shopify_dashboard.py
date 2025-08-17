@@ -34,11 +34,11 @@ st.set_page_config(
 STORES = {
     "BatterBox Sports": {
         "domain": "batterboxsports.myshopify.com",
-        "access_token": "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"
+        "access_token": "YOUR_BATTERBOX_ACCESS_TOKEN_HERE"
     },
     "Groovy Golfer": {
         "domain": "groovygolfer.myshopify.com", 
-        "access_token": "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"
+        "access_token": "YOUR_GROOVY_GOLFER_ACCESS_TOKEN_HERE"
     }
 }
 
