@@ -15,6 +15,7 @@ warnings.filterwarnings('ignore')
 import requests
 import json
 import re
+import os
 from datetime import datetime, timedelta
 import time
 import streamlit as st
@@ -34,11 +35,11 @@ st.set_page_config(
 STORES = {
     "BatterBox Sports": {
         "domain": "batterboxsports.myshopify.com",
-        "access_token": "YOUR_BATTERBOX_ACCESS_TOKEN_HERE"
+        "access_token": os.environ.get("SHOPIFY_BATTERBOX_TOKEN", "YOUR_BATTERBOX_ACCESS_TOKEN_HERE")
     },
     "Groovy Golfer": {
         "domain": "groovygolfer.myshopify.com", 
-        "access_token": "YOUR_GROOVY_GOLFER_ACCESS_TOKEN_HERE"
+        "access_token": os.environ.get("SHOPIFY_GROOVY_GOLFER_TOKEN", "YOUR_GROOVY_GOLFER_ACCESS_TOKEN_HERE")
     }
 }
 
