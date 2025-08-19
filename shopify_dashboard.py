@@ -302,8 +302,8 @@ def main():
     # Smart authentication system - auto-login for Shopify admin, manual login for direct access
     import streamlit as st
     
-    # Check for authentication token from Shopify admin
-    auth_token = st.experimental_get_query_params().get('auth_token', [None])[0]
+    # Check for authentication token from Shopify admin (using modern st.query_params)
+    auth_token = st.query_params.get('auth_token', None)
     
     # Secret token for Shopify admin access
     SHOPIFY_ADMIN_TOKEN = "SHOPIFY_ADMIN_2024"
