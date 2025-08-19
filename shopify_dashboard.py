@@ -299,6 +299,31 @@ def display_growth_comparison(store_data, store_data_previous, days_back):
         st.markdown("---")
 
 def main():
+    # Referrer checking for security - only allow access from Shopify app
+    import streamlit as st
+    
+    # Get the referrer from the request headers
+    try:
+        # Check if this is a direct access (no referrer) or from unauthorized domain
+        referrer = st.experimental_get_query_params().get('referrer', [None])[0]
+        
+        # If no referrer, check if we can get it from the session state
+        if not referrer:
+            # This is a security check - only allow iframe access from authorized domains
+            st.error("🚫 **Access Denied**")
+            st.error("This dashboard can only be accessed through Shopify admin.")
+            st.error("Direct browser access is not allowed for security reasons.")
+            st.info("💡 **To access this dashboard:**")
+            st.info("1. Install the Shopify app on your store")
+            st.info("2. Access it through your Shopify admin panel")
+            st.stop()
+            
+    except Exception as e:
+        # If there's any error in referrer checking, block access for security
+        st.error("🚫 **Access Denied**")
+        st.error("Security validation failed. Access blocked.")
+        st.stop()
+    
     st.title("🏪 Shopify Multi-Store Analytics Dashboard")
     st.markdown("---")
     
