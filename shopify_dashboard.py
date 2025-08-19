@@ -299,33 +299,61 @@ def display_growth_comparison(store_data, store_data_previous, days_back):
         st.markdown("---")
 
 def main():
-    # Referrer checking for security - only allow access from Shopify app
+    # Smart authentication system - auto-login for Shopify admin, manual login for direct access
     import streamlit as st
     
-    # Get the referrer from the request headers
-    try:
-        # Check if this is a direct access (no referrer) or from unauthorized domain
-        referrer = st.experimental_get_query_params().get('referrer', [None])[0]
+    # Check for authentication token from Shopify admin
+    auth_token = st.experimental_get_query_params().get('auth_token', [None])[0]
+    
+    # Secret token for Shopify admin access
+    SHOPIFY_ADMIN_TOKEN = "SHOPIFY_ADMIN_2024"
+    
+    # Check if user is authenticated
+    if 'authenticated' not in st.session_state:
+        st.session_state.authenticated = False
+    
+    # Auto-authenticate if valid token is present (Shopify admin access)
+    if auth_token == SHOPIFY_ADMIN_TOKEN:
+        st.session_state.authenticated = True
+        st.success("🔐 **Auto-authenticated via Shopify admin**")
+    
+    # Show login screen for direct browser access
+    if not st.session_state.authenticated:
+        st.title("🔒 **Shopify Analytics Dashboard - Login Required**")
+        st.markdown("---")
         
-        # If no referrer, check if we can get it from the session state
-        if not referrer:
-            # This is a security check - only allow iframe access from authorized domains
-            st.error("🚫 **Access Denied**")
-            st.error("This dashboard can only be accessed through Shopify admin.")
-            st.error("Direct browser access is not allowed for security reasons.")
-            st.info("💡 **To access this dashboard:**")
-            st.info("1. Install the Shopify app on your store")
-            st.info("2. Access it through your Shopify admin panel")
-            st.stop()
-            
-    except Exception as e:
-        # If there's any error in referrer checking, block access for security
         st.error("🚫 **Access Denied**")
-        st.error("Security validation failed. Access blocked.")
+        st.error("This dashboard can only be accessed through Shopify admin.")
+        st.error("Direct browser access is not allowed for security reasons.")
+        
+        st.info("💡 **To access this dashboard:**")
+        st.info("1. Install the Shopify app on your store")
+        st.info("2. Access it through your Shopify admin panel")
+        st.info("3. You will be automatically logged in")
+        
+        # Optional: Add a manual login option for authorized users
+        with st.expander("🔑 **Manual Login (Authorized Users Only)**"):
+            st.warning("⚠️ **Security Notice:** Only use this if you are an authorized user with proper credentials.")
+            
+            # Simple username/password system
+            username = st.text_input("Username")
+            password = st.text_input("Password", type="password")
+            
+            if st.button("Login"):
+                # Add your credentials here
+                if username == "admin" and password == "shopify2024":
+                    st.session_state.authenticated = True
+                    st.success("✅ **Login successful!**")
+                    st.rerun()
+                else:
+                    st.error("❌ **Invalid credentials**")
+        
         st.stop()
     
-    st.title("🏪 Shopify Multi-Store Analytics Dashboard")
-    st.markdown("---")
+    # If authenticated, show the dashboard
+    if st.session_state.authenticated:
+        st.title("🏪 Shopify Multi-Store Analytics Dashboard")
+        st.markdown("---")
     
     # Store connection status
     st.subheader("🔗 Store Connection Status")
