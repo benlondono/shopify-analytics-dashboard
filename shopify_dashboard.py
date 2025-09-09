@@ -23,6 +23,14 @@ import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
+# Import Google Ads integration
+try:
+    # from google_ads_config import fetch_google_ads_data, display_google_ads_section, get_google_ads_client
+    GOOGLE_ADS_AVAILABLE = False
+# except ImportError:
+    GOOGLE_ADS_AVAILABLE = False
+    st.warning("Google Ads integration not available. Install required packages.")
+
 # Page configuration
 st.set_page_config(
     page_title="Shopify Multi-Store Dashboard",
@@ -548,6 +556,54 @@ def main():
             # Display growth comparison if enabled
             if show_growth_comparison and not custom_dates:
                 display_growth_comparison(store_data, store_data_previous, days_back)
+        
+        # Google Ads Analytics Section
+        st.markdown("---")
+        st.header("📊 Google Ads Analytics")
+        
+        if GOOGLE_ADS_AVAILABLE:
+            # Check if Google Ads credentials are configured
+            google_ads_client = get_google_ads_client()
+            
+            if google_ads_client:
+                try:
+                    # Fetch Google Ads data for the selected date range
+                    if custom_dates:
+                        start_date = start_date
+                        end_date = end_date
+                    else:
+                        end_date = datetime.now()
+                        start_date = end_date - timedelta(days=days_back)
+                    
+                    # Get customer ID from environment (you'll need to set this)
+                    customer_id = os.environ.get('GOOGLE_ADS_LOGIN_CUSTOMER_ID')
+                    
+                    if customer_id:
+                        with st.spinner("🔄 Fetching Google Ads data..."):
+                            google_ads_data = fetch_google_ads_data(
+                                google_ads_client, 
+                                customer_id, 
+                                start_date, 
+                                end_date
+                            )
+                        
+                        if google_ads_data:
+                            display_google_ads_section(google_ads_data)
+                        else:
+                            st.warning("⚠️ No Google Ads data available for the selected date range.")
+                    else:
+                        st.info("ℹ️ **Google Ads Customer ID not configured**")
+                        st.info("Set the GOOGLE_ADS_LOGIN_CUSTOMER_ID environment variable to view advertising analytics.")
+                        
+                except Exception as e:
+                    st.error(f"❌ Error fetching Google Ads data: {str(e)}")
+                    st.info("💡 Make sure your Google Ads API credentials are properly configured.")
+            else:
+                st.info("ℹ️ **Google Ads API not configured**")
+                st.info("Please configure your Google Ads API credentials to view advertising analytics.")
+        else:
+            st.info("ℹ️ **Google Ads integration not available**")
+            st.info("Install the required packages: `pip install google-ads google-auth google-auth-oauthlib google-auth-httplib2`")
     
     else:
         st.error("❌ No stores are connected. Please check your API credentials.")
