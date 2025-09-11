@@ -25,7 +25,7 @@ from plotly.subplots import make_subplots
 
 # Page configuration
 st.set_page_config(
-    page_title="Shopify Multi-Store Dashboard",
+    page_title="Shopify Multi-Store Dashboard V2",
     page_icon="🏪",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -352,7 +352,7 @@ def main():
     
     # If authenticated, show the dashboard
     if st.session_state.authenticated:
-        st.title("🏪 Shopify Multi-Store Analytics Dashboard")
+        st.title("🏪 Shopify Multi-Store Analytics Dashboard V2")
         st.markdown("---")
     
     # Store connection status
